@@ -12,7 +12,7 @@ This roadmap delivers a WhatsApp channel plugin for OpenClaw in four phases foll
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Plugin Scaffold** - Package, manifest, config, and lifecycle so the plugin loads into OpenClaw Gateway
+- [x] **Phase 1: Plugin Scaffold** - Package, manifest, config, and lifecycle so the plugin loads into OpenClaw Gateway
 - [ ] **Phase 2: WebSocket Transport** - Persistent connection to PipesBot with reconnection, heartbeat, and clean teardown
 - [ ] **Phase 3: Inbound Messages** - Receive all WhatsApp message types and dispatch to OpenClaw agent pipeline
 - [ ] **Phase 4: Outbound and Status** - Send agent replies back through WhatsApp and surface delivery status
@@ -31,7 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 1 plan
 
 Plans:
-- [ ] 01-01-PLAN.md — Package scaffold, manifest, plugin entry, and service lifecycle
+- [x] 01-01-PLAN.md — Package scaffold, manifest, plugin entry, and service lifecycle
 
 ### Phase 2: WebSocket Transport
 **Goal**: Plugin maintains a reliable, persistent WebSocket connection to PipesBot that recovers from failures automatically
@@ -86,7 +86,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Plugin Scaffold | 0/1 | Not started | - |
+| 1. Plugin Scaffold | 1/1 | Complete | 2026-02-17 |
 | 2. WebSocket Transport | 0/TBD | Not started | - |
 | 3. Inbound Messages | 0/TBD | Not started | - |
 | 4. Outbound and Status | 0/TBD | Not started | - |

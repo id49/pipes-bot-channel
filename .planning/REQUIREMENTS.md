@@ -7,10 +7,10 @@
 
 ### Plugin Infrastructure
 
-- [ ] **INFRA-01**: Plugin registers as an OpenClaw channel via `openclaw.plugin.json` manifest with correct channel ID
-- [ ] **INFRA-02**: Plugin accepts PipesBot API key (`pk_`) configuration via OpenClaw's config system (`openclaw.json`)
-- [ ] **INFRA-03**: Plugin installs cleanly via `openclaw plugins install` as an npm package
-- [ ] **INFRA-04**: Plugin implements gateway lifecycle (start/stop) with clean teardown of all resources
+- [x] **INFRA-01**: Plugin registers as an OpenClaw channel via `openclaw.plugin.json` manifest with correct channel ID
+- [x] **INFRA-02**: Plugin accepts PipesBot API key (`pk_`) configuration via OpenClaw's config system (`openclaw.json`)
+- [x] **INFRA-03**: Plugin installs cleanly via `openclaw plugins install` as an npm package
+- [x] **INFRA-04**: Plugin implements gateway lifecycle (start/stop) with clean teardown of all resources
 
 ### WebSocket Transport
 
@@ -60,10 +60,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01 | Phase 1 | Pending |
-| INFRA-02 | Phase 1 | Pending |
-| INFRA-03 | Phase 1 | Pending |
-| INFRA-04 | Phase 1 | Pending |
+| INFRA-01 | Phase 1 | Complete |
+| INFRA-02 | Phase 1 | Complete |
+| INFRA-03 | Phase 1 | Complete |
+| INFRA-04 | Phase 1 | Complete |
 | WS-01 | Phase 2 | Pending |
 | WS-02 | Phase 2 | Pending |
 | WS-03 | Phase 2 | Pending |

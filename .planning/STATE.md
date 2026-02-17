@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** WhatsApp messages flow seamlessly through PipesBot into OpenClaw's agent system, and replies flow back -- with full media support and reliable reconnection.
-**Current focus:** Phase 1 - Plugin Scaffold
+**Current focus:** Phase 2 - WebSocket Transport
 
 ## Current Position
 
-Phase: 1 of 4 (Plugin Scaffold)
-Plan: 1 of TBD in current phase
-Status: In progress
-Last activity: 2026-02-17 -- Completed 01-01-PLAN.md (Plugin Scaffold)
+Phase: 1 of 4 (Plugin Scaffold) — Complete
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-02-17 — Phase 1 complete, verified ✓
 
-Progress: [█░░░░░░░░░] ~10%
+Progress: [███░░░░░░░] 25%
 
 ## Performance Metrics
 
@@ -61,6 +61,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-17T21:09:44Z
-Stopped at: Completed 01-01-PLAN.md -- plugin scaffold complete
+Last session: 2026-02-17
+Stopped at: Phase 1 complete, verified. Ready for Phase 2.
 Resume file: None
