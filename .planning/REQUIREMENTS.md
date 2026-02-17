@@ -14,10 +14,10 @@
 
 ### WebSocket Transport
 
-- [ ] **WS-01**: WebSocket client connects to PipesBot hub using `pk_` API key authentication
-- [ ] **WS-02**: Automatic reconnection with exponential backoff and jitter on transient disconnects
-- [ ] **WS-03**: Ping/pong heartbeat monitoring detects silent dead connections (no ping within 75s triggers reconnect)
-- [ ] **WS-04**: Close code classification distinguishes transient failures (retry) from permanent failures (stop)
+- [x] **WS-01**: WebSocket client connects to PipesBot hub using `pk_` API key authentication
+- [x] **WS-02**: Automatic reconnection with exponential backoff and jitter on transient disconnects
+- [x] **WS-03**: Ping/pong heartbeat monitoring detects silent dead connections (no ping within 75s triggers reconnect)
+- [x] **WS-04**: Close code classification distinguishes transient failures (retry) from permanent failures (stop)
 
 ### Inbound Messages
 
@@ -64,10 +64,10 @@
 | INFRA-02 | Phase 1 | Complete |
 | INFRA-03 | Phase 1 | Complete |
 | INFRA-04 | Phase 1 | Complete |
-| WS-01 | Phase 2 | Pending |
-| WS-02 | Phase 2 | Pending |
-| WS-03 | Phase 2 | Pending |
-| WS-04 | Phase 2 | Pending |
+| WS-01 | Phase 2 | Complete |
+| WS-02 | Phase 2 | Complete |
+| WS-03 | Phase 2 | Complete |
+| WS-04 | Phase 2 | Complete |
 | IN-01 | Phase 3 | Pending |
 | IN-02 | Phase 3 | Pending |
 | IN-03 | Phase 3 | Pending |
