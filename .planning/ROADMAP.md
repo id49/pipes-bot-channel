@@ -28,11 +28,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. OpenClaw Gateway recognizes the plugin as a channel and lists it in available channels
   3. Configuring a PipesBot `pk_` API key in `openclaw.json` is validated at startup (rejects missing or malformed keys)
   4. Gateway start and stop lifecycle calls complete without resource leaks or hanging processes
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md — Package scaffold, manifest, plugin entry, and service lifecycle
 
 ### Phase 2: WebSocket Transport
 **Goal**: Plugin maintains a reliable, persistent WebSocket connection to PipesBot that recovers from failures automatically
@@ -87,7 +86,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Plugin Scaffold | 0/TBD | Not started | - |
+| 1. Plugin Scaffold | 0/1 | Not started | - |
 | 2. WebSocket Transport | 0/TBD | Not started | - |
 | 3. Inbound Messages | 0/TBD | Not started | - |
 | 4. Outbound and Status | 0/TBD | Not started | - |
