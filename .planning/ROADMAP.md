@@ -57,11 +57,11 @@ Plans:
   2. Media messages (image, audio, video, document) arrive with their download URL and 48-hour TTL metadata intact
   3. Special message types (sticker, location, contacts, reaction) are received and normalized into a format the agent can consume
   4. Each inbound message is scoped to the correct sender session so agents maintain per-conversation context
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01-PLAN.md — Runtime singleton, message types, and media download
+- [ ] 03-02-PLAN.md — Inbound handler with all message type normalization and service wiring
 
 ### Phase 4: Outbound and Status
 **Goal**: Agents can reply to WhatsApp conversations and see whether their messages were delivered
@@ -87,5 +87,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 |-------|----------------|--------|-----------|
 | 1. Plugin Scaffold | 1/1 | Complete | 2026-02-17 |
 | 2. WebSocket Transport | 1/1 | Complete | 2026-02-17 |
-| 3. Inbound Messages | 0/TBD | Not started | - |
+| 3. Inbound Messages | 0/2 | Not started | - |
 | 4. Outbound and Status | 0/TBD | Not started | - |
