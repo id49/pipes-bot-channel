@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-02-17)
 
 ## Current Position
 
-Phase: 2 of 4 (WebSocket Transport) — Complete
-Plan: 1 of 1 in current phase
-Status: Phase complete
-Last activity: 2026-02-17 — Completed 02-01-PLAN.md
+Phase: 3 of 4 (Inbound Messages) — In progress
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-02-17 — Completed 03-01-PLAN.md
 
-Progress: [██████░░░░] 50%
+Progress: [███████░░░] ~60% (3 of ~5 known plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: ~2.5 min
-- Total execution time: ~5 min
+- Total plans completed: 3
+- Average duration: ~2.3 min
+- Total execution time: ~7 min
 
 **By Phase:**
 
@@ -29,9 +29,10 @@ Progress: [██████░░░░] 50%
 |-------|-------|-------|----------|
 | 01-plugin-scaffold | 1 | ~2 min | 2 min |
 | 02-websocket-transport | 1 | ~3 min | 3 min |
+| 03-inbound-messages | 1 (of 2) | ~2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min), 02-01 (3 min)
+- Last 5 plans: 01-01 (2 min), 02-01 (3 min), 03-01 (2 min)
 - Trend: Stable, within baseline
 
 *Updated after each plan completion*
@@ -50,10 +51,12 @@ Recent decisions affecting current work:
 - `noEmit: true` in tsconfig -- jiti handles runtime loading, tsc is type-check only
 - `emptyPluginConfigSchema()` in plugin export for Phase 1; real validation in manifest JSON Schema
 - `.js` extension on relative imports required for ESM nodenext resolution
-- `PluginLogger` type derived via `OpenClawPluginServiceContext["logger"]` (not a named export from openclaw/plugin-sdk)
+- `PluginLogger` type derived via `OpenClawPluginServiceContext["logger"]` (not a named export from openclaw/plugin-sdk top-level)
 - 2 min reconnect backoff cap (confirmed)
 - WS heartbeat: 25s ping + 50s pong timeout = 75s total cycle (WS-03)
 - Auth failures (401/403) use `unexpected-response` event -- stops reconnecting permanently
+- Runtime singleton: setPipesBotRuntime in register(), getPipesBotRuntime in handlers (matches all other OpenClaw extensions)
+- downloadPipesBotMedia uses fetchRemoteMedia + saveMediaBuffer (not raw fetch + fs.writeFile) for SSRF protection, MIME sniffing, and directory management
 
 ### Pending Todos
 
@@ -66,6 +69,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-17T22:24:31Z
-Stopped at: Completed 02-01-PLAN.md (WebSocket transport layer complete)
+Last session: 2026-02-17T23:12:24Z
+Stopped at: Completed 03-01-PLAN.md (runtime singleton, types, media download foundation)
 Resume file: None
