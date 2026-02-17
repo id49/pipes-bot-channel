@@ -1,7 +1,7 @@
 # Requirements: PipesBot OpenClaw Channel Plugin
 
 **Defined:** 2026-02-17
-**Core Value:** WhatsApp messages flow seamlessly through PipesBot into OpenClaw's agent system, and replies flow back — with full media support and reliable reconnection.
+**Core Value:** WhatsApp messages flow seamlessly through PipesBot into OpenClaw's agent system, and replies flow back -- with full media support and reliable reconnection.
 
 ## v1 Requirements
 
@@ -51,7 +51,7 @@
 |---------|--------|
 | App-scoped (`ak_`) key support | Multi-tenant routing complexity; `pk_` covers primary use case |
 | REST API fallback for sending | Single WS connection handles both directions; simpler architecture |
-| Media upload from OpenClaw to WhatsApp | Requires Meta media upload API — separate integration surface |
+| Media upload from OpenClaw to WhatsApp | Requires Meta media upload API -- separate integration surface |
 | Webhook delivery mode | WebSocket-only for v1 |
 | Conversation-scoped connections | Full user scope only; high-volume optimization deferred |
 | Group chat support | Not in PipesBot's current Cloud API offering |
@@ -60,28 +60,28 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01 | — | Pending |
-| INFRA-02 | — | Pending |
-| INFRA-03 | — | Pending |
-| INFRA-04 | — | Pending |
-| WS-01 | — | Pending |
-| WS-02 | — | Pending |
-| WS-03 | — | Pending |
-| WS-04 | — | Pending |
-| IN-01 | — | Pending |
-| IN-02 | — | Pending |
-| IN-03 | — | Pending |
-| IN-04 | — | Pending |
-| OUT-01 | — | Pending |
-| OUT-02 | — | Pending |
-| OUT-03 | — | Pending |
-| OUT-04 | — | Pending |
+| INFRA-01 | Phase 1 | Pending |
+| INFRA-02 | Phase 1 | Pending |
+| INFRA-03 | Phase 1 | Pending |
+| INFRA-04 | Phase 1 | Pending |
+| WS-01 | Phase 2 | Pending |
+| WS-02 | Phase 2 | Pending |
+| WS-03 | Phase 2 | Pending |
+| WS-04 | Phase 2 | Pending |
+| IN-01 | Phase 3 | Pending |
+| IN-02 | Phase 3 | Pending |
+| IN-03 | Phase 3 | Pending |
+| IN-04 | Phase 3 | Pending |
+| OUT-01 | Phase 4 | Pending |
+| OUT-02 | Phase 4 | Pending |
+| OUT-03 | Phase 4 | Pending |
+| OUT-04 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 16 total
-- Mapped to phases: 0
-- Unmapped: 16 ⚠️
+- Mapped to phases: 16
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-17*
-*Last updated: 2026-02-17 after initial definition*
+*Last updated: 2026-02-17 after roadmap creation*
