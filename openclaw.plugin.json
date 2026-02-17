@@ -1,0 +1,23 @@
+{
+  "id": "pipes-bot-channel",
+  "channels": ["pipes-bot"],
+  "configSchema": {
+    "type": "object",
+    "required": ["apiKey"],
+    "additionalProperties": false,
+    "properties": {
+      "apiKey": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^pk_"
+      }
+    }
+  },
+  "uiHints": {
+    "apiKey": {
+      "label": "PipesBot API Key",
+      "sensitive": true,
+      "placeholder": "pk_..."
+    }
+  }
+}

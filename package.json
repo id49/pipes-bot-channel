@@ -1,0 +1,21 @@
+{
+  "name": "pipes-bot-channel",
+  "version": "0.1.0",
+  "type": "module",
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.13",
+    "openclaw": "*",
+    "typescript": "^5.0.0"
+  },
+  "openclaw": {
+    "extensions": ["./index.ts"]
+  },
+  "files": [
+    "index.ts",
+    "src/**/*.ts",
+    "openclaw.plugin.json"
+  ]
+}
