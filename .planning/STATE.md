@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** WhatsApp messages flow seamlessly through PipesBot into OpenClaw's agent system, and replies flow back -- with full media support and reliable reconnection.
-**Current focus:** Phase 3 - Inbound Messages
+**Current focus:** Phase 3 - Inbound Messages (complete)
 
 ## Current Position
 
-Phase: 3 of 4 (Inbound Messages) — In progress
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-02-17 — Completed 03-01-PLAN.md
+Phase: 3 of 4 (Inbound Messages) — Complete
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-02-17 — Completed 03-02-PLAN.md
 
-Progress: [███████░░░] ~60% (3 of ~5 known plans complete)
+Progress: [████████░░] ~80% (4 of ~5 known plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: ~2.3 min
-- Total execution time: ~7 min
+- Total plans completed: 4
+- Average duration: ~2.5 min
+- Total execution time: ~10 min
 
 **By Phase:**
 
@@ -29,10 +29,10 @@ Progress: [███████░░░] ~60% (3 of ~5 known plans complete)
 |-------|-------|-------|----------|
 | 01-plugin-scaffold | 1 | ~2 min | 2 min |
 | 02-websocket-transport | 1 | ~3 min | 3 min |
-| 03-inbound-messages | 1 (of 2) | ~2 min | 2 min |
+| 03-inbound-messages | 2 | ~5 min | 2.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min), 02-01 (3 min), 03-01 (2 min)
+- Last 5 plans: 01-01 (2 min), 02-01 (3 min), 03-01 (2 min), 03-02 (3 min)
 - Trend: Stable, within baseline
 
 *Updated after each plan completion*
@@ -57,6 +57,9 @@ Recent decisions affecting current work:
 - Auth failures (401/403) use `unexpected-response` event -- stops reconnecting permanently
 - Runtime singleton: setPipesBotRuntime in register(), getPipesBotRuntime in handlers (matches all other OpenClaw extensions)
 - downloadPipesBotMedia uses fetchRemoteMedia + saveMediaBuffer (not raw fetch + fs.writeFile) for SSRF protection, MIME sniffing, and directory management
+- dispatchReplyWithBufferedBlockDispatcher used for agent dispatch (not dispatchReplyFromConfig directly) -- IRC pattern; PipesBot has no typing API so typing callbacks are no-ops
+- OriginatingChannel: "pipes-bot-channel" works without cast -- ChannelId = ChatChannelId | (string & {}) allows custom strings
+- connection! non-null assertion in send callback (message event only fires while connection alive)
 
 ### Pending Todos
 
@@ -69,6 +72,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-17T23:12:24Z
-Stopped at: Completed 03-01-PLAN.md (runtime singleton, types, media download foundation)
+Last session: 2026-02-17T23:18:55Z
+Stopped at: Completed 03-02-PLAN.md (inbound handler, service wiring)
 Resume file: None
