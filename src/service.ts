@@ -1,5 +1,6 @@
 import type { OpenClawPluginService, OpenClawPluginServiceContext } from "openclaw/plugin-sdk";
 import { PipesBotConnection } from "./connection.js";
+import { handleInbound } from "./inbound.js";
 
 export function createPipesBotService(): OpenClawPluginService {
   let connection: PipesBotConnection | null = null;
@@ -27,7 +28,14 @@ export function createPipesBotService(): OpenClawPluginService {
       });
 
       connection.on("message", (msg: object) => {
-        void msg; // Phase 3 stub
+        void handleInbound(msg, {
+          apiKey,
+          accountId: "default",
+          send: (payload: object) => connection!.send(payload),
+          logger: ctx.logger,
+        }).catch((err: unknown) => {
+          ctx.logger.error(`pipes-bot-channel: inbound error: ${String(err)}`);
+        });
       });
 
       connection.connect();
