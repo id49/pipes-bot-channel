@@ -21,10 +21,10 @@
 
 ### Inbound Messages
 
-- [ ] **IN-01**: Text messages received and dispatched to OpenClaw agent pipeline with sender info and conversation context
-- [ ] **IN-02**: Media messages (image, audio, video, document) received with download URL passthrough and 48h TTL metadata
-- [ ] **IN-03**: Special message types (sticker, location, contacts, reaction) received and normalized for agent consumption
-- [ ] **IN-04**: Sender identity (phone number, push name) and conversation context preserved in dispatched messages
+- [x] **IN-01**: Text messages received and dispatched to OpenClaw agent pipeline with sender info and conversation context
+- [x] **IN-02**: Media messages (image, audio, video, document) received with download URL passthrough and 48h TTL metadata
+- [x] **IN-03**: Special message types (sticker, location, contacts, reaction) received and normalized for agent consumption
+- [x] **IN-04**: Sender identity (phone number, push name) and conversation context preserved in dispatched messages
 
 ### Outbound Messages
 
@@ -68,10 +68,10 @@
 | WS-02 | Phase 2 | Complete |
 | WS-03 | Phase 2 | Complete |
 | WS-04 | Phase 2 | Complete |
-| IN-01 | Phase 3 | Pending |
-| IN-02 | Phase 3 | Pending |
-| IN-03 | Phase 3 | Pending |
-| IN-04 | Phase 3 | Pending |
+| IN-01 | Phase 3 | Complete |
+| IN-02 | Phase 3 | Complete |
+| IN-03 | Phase 3 | Complete |
+| IN-04 | Phase 3 | Complete |
 | OUT-01 | Phase 4 | Pending |
 | OUT-02 | Phase 4 | Pending |
 | OUT-03 | Phase 4 | Pending |

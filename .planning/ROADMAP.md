@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Plugin Scaffold** - Package, manifest, config, and lifecycle so the plugin loads into OpenClaw Gateway
 - [x] **Phase 2: WebSocket Transport** - Persistent connection to PipesBot with reconnection, heartbeat, and clean teardown
-- [ ] **Phase 3: Inbound Messages** - Receive all WhatsApp message types and dispatch to OpenClaw agent pipeline
+- [x] **Phase 3: Inbound Messages** - Receive all WhatsApp message types and dispatch to OpenClaw agent pipeline
 - [ ] **Phase 4: Outbound and Status** - Send agent replies back through WhatsApp and surface delivery status
 
 ## Phase Details
@@ -60,8 +60,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Runtime singleton, message types, and media download
-- [ ] 03-02-PLAN.md — Inbound handler with all message type normalization and service wiring
+- [x] 03-01-PLAN.md — Runtime singleton, message types, and media download
+- [x] 03-02-PLAN.md — Inbound handler with all message type normalization and service wiring
 
 ### Phase 4: Outbound and Status
 **Goal**: Agents can reply to WhatsApp conversations and see whether their messages were delivered
@@ -87,5 +87,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 |-------|----------------|--------|-----------|
 | 1. Plugin Scaffold | 1/1 | Complete | 2026-02-17 |
 | 2. WebSocket Transport | 1/1 | Complete | 2026-02-17 |
-| 3. Inbound Messages | 0/2 | Not started | - |
+| 3. Inbound Messages | 2/2 | Complete | 2026-02-17 |
 | 4. Outbound and Status | 0/TBD | Not started | - |
