@@ -1,6 +1,9 @@
 import type { OpenClawPluginService, OpenClawPluginServiceContext } from "openclaw/plugin-sdk";
+import { PipesBotConnection } from "./connection.js";
 
 export function createPipesBotService(): OpenClawPluginService {
+  let connection: PipesBotConnection | null = null;
+
   return {
     id: "pipes-bot-channel",
 
@@ -17,10 +20,22 @@ export function createPipesBotService(): OpenClawPluginService {
         return;
       }
 
-      ctx.logger.info("pipes-bot-channel: service started");
+      connection = new PipesBotConnection(apiKey, ctx.logger);
+
+      connection.on("error", (err: Error) => {
+        ctx.logger.error(`pipes-bot-channel: fatal connection error: ${err.message}`);
+      });
+
+      connection.on("message", (msg: object) => {
+        void msg; // Phase 3 stub
+      });
+
+      connection.connect();
     },
 
     stop(ctx: OpenClawPluginServiceContext): void {
+      connection?.disconnect();
+      connection = null;
       ctx.logger.info("pipes-bot-channel: service stopped");
     },
   };
