@@ -43,11 +43,10 @@ Plans:
   3. A silently dead connection (no ping received within 75 seconds) is detected and triggers reconnection
   4. A permanent failure (invalid API key, auth revoked) stops reconnection attempts and reports the error
   5. Stopping the gateway account tears down the WebSocket cleanly with no lingering timers or listeners
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
+- [ ] 02-01-PLAN.md — PipesBotConnection class and service lifecycle wiring
 
 ### Phase 3: Inbound Messages
 **Goal**: All WhatsApp message types received through PipesBot reach the OpenClaw agent pipeline with full context
