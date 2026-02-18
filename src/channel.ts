@@ -1,7 +1,13 @@
 import type { ChannelPlugin, ChannelSetupInput, OpenClawConfig } from "openclaw/plugin-sdk";
+import { buildChannelConfigSchema } from "openclaw/plugin-sdk";
 import { getConnectionStatus } from "./status-store.js";
+import { PipesBotConfigSchema } from "./config-schema.js";
 
-const CHANNEL_KEY = "pipes-bot-channel";
+type PipesBotSetupInput = ChannelSetupInput & {
+  apiKey?: string;
+};
+
+const CHANNEL_KEY = "pipes-bot";
 
 function getChannelConfig(cfg: OpenClawConfig): Record<string, unknown> {
   return ((cfg.channels as Record<string, unknown>)?.[CHANNEL_KEY] ?? {}) as Record<string, unknown>;
@@ -16,17 +22,13 @@ export function resolveApiKey(cfg: OpenClawConfig): string | undefined {
 export const pipesBotChannelPlugin: ChannelPlugin = {
   id: CHANNEL_KEY,
   configSchema: {
-    schema: {
-      type: "object",
-      properties: {
-        apiKey: { type: "string" },
-      },
-    },
+    ...buildChannelConfigSchema(PipesBotConfigSchema),
     uiHints: {
       apiKey: {
         label: "PipesBot API Key",
         sensitive: true,
         placeholder: "pk_...",
+        help: "Your PipesBot API key (starts with pk_)",
       },
     },
   },
@@ -47,8 +49,13 @@ export const pipesBotChannelPlugin: ChannelPlugin = {
   config: {
     listAccountIds: () => ["default"],
     resolveAccount: (cfg) => {
+      const channelCfg = getChannelConfig(cfg);
       const apiKey = resolveApiKey(cfg);
-      return { apiKey, configured: Boolean(apiKey) };
+      return {
+        apiKey,
+        enabled: channelCfg.enabled !== false,
+        configured: Boolean(apiKey),
+      };
     },
     isConfigured: (account) => account.configured,
   },
@@ -56,7 +63,7 @@ export const pipesBotChannelPlugin: ChannelPlugin = {
   setup: {
     resolveAccountId: () => "default",
     applyAccountConfig: ({ cfg, input }) => {
-      const setupInput = input as ChannelSetupInput & { apiKey?: string };
+      const setupInput = input as PipesBotSetupInput;
       const base = getChannelConfig(cfg);
       return {
         ...cfg,
