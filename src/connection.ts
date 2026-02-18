@@ -171,6 +171,9 @@ export class PipesBotConnection extends EventEmitter {
     this.pingTimer = setInterval(() => {
       ws.ping();
 
+      if (this.pongTimer !== null) {
+        clearTimeout(this.pongTimer);
+      }
       this.pongTimer = setTimeout(() => {
         this.logger.error(
           "pipes-bot-channel: pong timeout -- terminating dead connection"

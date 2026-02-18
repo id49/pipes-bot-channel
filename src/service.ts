@@ -81,7 +81,7 @@ export function createPipesBotService(): OpenClawPluginService {
     stop(ctx: OpenClawPluginServiceContext): void {
       connection?.disconnect();
       connection = null;
-      updateConnectionStatus({ connected: false, lastError: null });
+      updateConnectionStatus({ connected: false, authFailed: false, lastError: null });
       ctx.logger.info("pipes-bot-channel: service stopped");
     },
   };
