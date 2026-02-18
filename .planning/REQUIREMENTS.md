@@ -28,10 +28,10 @@
 
 ### Outbound Messages
 
-- [ ] **OUT-01**: Agent text replies sent back via WebSocket `whatsapp_reply` message format
-- [ ] **OUT-02**: Delivery status confirmations (`reply_status`) processed and surfaced to OpenClaw
-- [ ] **OUT-03**: `SERVICE_WINDOW_EXPIRED` errors surfaced with human-readable messaging
-- [ ] **OUT-04**: Health monitoring adapter reports connection status to OpenClaw dashboard
+- [x] **OUT-01**: Agent text replies sent back via WebSocket `whatsapp_reply` message format
+- [x] **OUT-02**: Delivery status confirmations (`reply_status`) processed and surfaced to OpenClaw
+- [x] **OUT-03**: `SERVICE_WINDOW_EXPIRED` errors surfaced with human-readable messaging
+- [x] **OUT-04**: Health monitoring adapter reports connection status to OpenClaw dashboard
 
 ## v2 Requirements
 
@@ -72,10 +72,10 @@
 | IN-02 | Phase 3 | Complete |
 | IN-03 | Phase 3 | Complete |
 | IN-04 | Phase 3 | Complete |
-| OUT-01 | Phase 4 | Pending |
-| OUT-02 | Phase 4 | Pending |
-| OUT-03 | Phase 4 | Pending |
-| OUT-04 | Phase 4 | Pending |
+| OUT-01 | Phase 4 | Complete |
+| OUT-02 | Phase 4 | Complete |
+| OUT-03 | Phase 4 | Complete |
+| OUT-04 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 16 total
