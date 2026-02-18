@@ -4,6 +4,8 @@ import { handleInbound } from "./inbound.js";
 import { isPipesBotReplyStatus } from "./types.js";
 import { handleReplyStatus, trackOutboundReply } from "./outbound.js";
 import { getPipesBotRuntime } from "./runtime.js";
+import { updateConnectionStatus } from "./status-store.js";
+import type { ConnectionState } from "./connection.js";
 
 export function createPipesBotService(): OpenClawPluginService {
   let connection: PipesBotConnection | null = null;
@@ -26,7 +28,22 @@ export function createPipesBotService(): OpenClawPluginService {
 
       connection = new PipesBotConnection(apiKey, ctx.logger);
 
+      connection.on("state", (state: ConnectionState) => {
+        updateConnectionStatus({
+          connected: state === "connected",
+          ...(state === "connected"
+            ? { lastConnectedAt: Date.now(), lastError: null }
+            : {}),
+        });
+      });
+
       connection.on("error", (err: Error) => {
+        const isAuthFailure = err.message.includes("auth failed");
+        updateConnectionStatus({
+          connected: false,
+          authFailed: isAuthFailure,
+          lastError: err.message,
+        });
         ctx.logger.error(`pipes-bot-channel: fatal connection error: ${err.message}`);
       });
 
@@ -64,6 +81,7 @@ export function createPipesBotService(): OpenClawPluginService {
     stop(ctx: OpenClawPluginServiceContext): void {
       connection?.disconnect();
       connection = null;
+      updateConnectionStatus({ connected: false, lastError: null });
       ctx.logger.info("pipes-bot-channel: service stopped");
     },
   };
