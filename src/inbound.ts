@@ -30,11 +30,21 @@ export async function handleInbound(
   const cfg = core.config.loadConfig() as OpenClawConfig;
   const { apiKey, accountId, send, logger } = opts;
 
+  logger.info(
+    `pipes-bot-channel: inbound message [id=${data.messageId}] [type=${data.type}] from=${data.fromNumber} conversation=${data.conversationId}`,
+  );
+
   // 2. Skip unsupported message types
-  if (data.type === "unsupported") return;
+  if (data.type === "unsupported") {
+    logger.info(`pipes-bot-channel: skipping unsupported message type [id=${data.messageId}]`);
+    return;
+  }
 
   // 3. Skip reaction removals (no emoji present)
-  if (data.type === "reaction" && !data.reaction?.emoji) return;
+  if (data.type === "reaction" && !data.reaction?.emoji) {
+    logger.info(`pipes-bot-channel: skipping reaction removal [id=${data.messageId}]`);
+    return;
+  }
 
   // 4. Resolve body text
   const rawBody = resolveRawBody(data);
@@ -66,6 +76,10 @@ export async function handleInbound(
     accountId,
     peer: { kind: "direct", id: data.conversationId },
   });
+
+  logger.info(
+    `pipes-bot-channel: routed [id=${data.messageId}] -> agent=${route.agentId} session=${sessionKey}`,
+  );
 
   // 11. Resolve session store path
   const storePath = core.channel.session.resolveStorePath(cfg.session?.store, {
@@ -111,11 +125,15 @@ export async function handleInbound(
   //     Uses dispatchReplyWithBufferedBlockDispatcher — simpler than the
   //     createReplyDispatcherWithTyping pattern because PipesBot has no
   //     typing indicator API (typing callbacks are no-ops).
+  logger.info(`pipes-bot-channel: dispatching to agent pipeline [id=${data.messageId}]`);
   await core.channel.reply.dispatchReplyWithBufferedBlockDispatcher({
     ctx: ctxPayload,
     cfg,
     dispatcherOptions: {
       deliver: async (payload) => {
+        logger.info(
+          `pipes-bot-channel: delivering reply to conversation=${data.conversationId} [${(payload.text ?? "").length} chars]`,
+        );
         const sent = send({
           type: "whatsapp_reply",
           data: {

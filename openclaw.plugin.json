@@ -3,7 +3,7 @@
   "channels": ["pipes-bot"],
   "configSchema": {
     "type": "object",
-    "additionalProperties": false,
+    "additionalProperties": true,
     "properties": {}
   }
 }

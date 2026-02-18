@@ -46,6 +46,9 @@ export function createPipesBotService(): OpenClawPluginService {
       });
 
       connection.on("message", (msg: object) => {
+        const msgType = (msg as { type?: string }).type ?? "unknown";
+        ctx.logger.info(`pipes-bot-channel: ws message received [type=${msgType}]`);
+
         // Route reply_status events to outbound handler
         if (isPipesBotReplyStatus(msg)) {
           handleReplyStatus(msg, { logger: ctx.logger, core: getPipesBotRuntime() });
