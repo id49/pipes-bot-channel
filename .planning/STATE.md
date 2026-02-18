@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** WhatsApp messages flow seamlessly through PipesBot into OpenClaw's agent system, and replies flow back -- with full media support and reliable reconnection.
-**Current focus:** Phase 4 - Outbound and Status (in progress)
+**Current focus:** Phase 4 - Outbound and Status (COMPLETE)
 
 ## Current Position
 
-Phase: 4 of 4 (Outbound and Status) — In progress
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-02-18 — Completed 04-01-PLAN.md
+Phase: 4 of 4 (Outbound and Status)
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-02-18 — Completed 04-02-PLAN.md
 
-Progress: [█████████░] ~90% (5 of ~6 known plans complete)
+Progress: [██████████] 100% (6 of 6 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: ~2.4 min
-- Total execution time: ~12 min
+- Total plans completed: 6
+- Average duration: ~2.2 min
+- Total execution time: ~13 min
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [█████████░] ~90% (5 of ~6 known plans complete)
 | 01-plugin-scaffold | 1 | ~2 min | 2 min |
 | 02-websocket-transport | 1 | ~3 min | 3 min |
 | 03-inbound-messages | 2 | ~5 min | 2.5 min |
-| 04-outbound-and-status | 1 | ~2 min | 2 min |
+| 04-outbound-and-status | 2 | ~4 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min), 02-01 (3 min), 03-01 (2 min), 03-02 (3 min), 04-01 (2 min)
+- Last 6 plans: 01-01 (2 min), 02-01 (3 min), 03-01 (2 min), 03-02 (3 min), 04-01 (2 min), 04-02 (2 min)
 - Trend: Stable, within baseline
 
 *Updated after each plan completion*
@@ -63,6 +63,9 @@ Recent decisions affecting current work:
 - connection! non-null assertion in send callback (message event only fires while connection alive)
 - D-04-01-A: Only enqueue system event if pending entry existed (prevents phantom events from stale reply_status arrivals)
 - D-04-01-B: Lazy TTL eviction on each trackOutboundReply call (no timer overhead, bounded by outbound rate)
+- D-04-02-A: No gateway property on ChannelPlugin to prevent lifecycle conflict with registerService
+- D-04-02-B: reconnecting state maps to connected: false (two dashboard states, not three)
+- D-04-02-C: stop() resets status store to prevent stale connected state on restart
 
 ### Pending Todos
 
@@ -71,10 +74,9 @@ None.
 ### Blockers/Concerns
 
 - PipesBot WebSocket close codes not fully documented -- real-connection test deferred to integration testing (Phase 2 transport implemented without this blocker)
-- OpenClaw ChannelPlugin type signatures may shift if openclaw package bumps -- verified at Phase 1 build time, currently stable at 2026.2.15
 
 ## Session Continuity
 
-Last session: 2026-02-18T00:10:00Z
-Stopped at: Completed 04-01-PLAN.md (reply_status type, outbound handler, service wiring)
+Last session: 2026-02-18T00:14:35Z
+Stopped at: Completed 04-02-PLAN.md (status store, channel plugin, service wiring, registerChannel)
 Resume file: None
