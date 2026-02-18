@@ -14,13 +14,27 @@ export async function downloadPipesBotMedia(params: {
   const absoluteUrl = `${PIPES_BOT_API_BASE}${params.downloadUrl}`;
 
   try {
+    // First request with auth — follow redirects manually so the
+    // Authorization header is NOT forwarded to the R2 pre-signed URL.
+    const initialResponse = await fetch(absoluteUrl, {
+      headers: { Authorization: `Bearer ${params.apiKey}` },
+      redirect: "manual",
+    });
+
+    const redirectUrl =
+      initialResponse.status >= 300 && initialResponse.status < 400
+        ? initialResponse.headers.get("location")
+        : null;
+
     const fetched = await core.channel.media.fetchRemoteMedia({
-      url: absoluteUrl,
-      fetchImpl: (input, init) => {
-        const headers = new Headers((init?.headers as HeadersInit | undefined) ?? undefined);
-        headers.set("Authorization", `Bearer ${params.apiKey}`);
-        return fetch(input, { ...init, headers });
-      },
+      url: redirectUrl ?? absoluteUrl,
+      fetchImpl: redirectUrl
+        ? undefined // no custom headers needed for pre-signed R2 URL
+        : (input, init) => {
+            const headers = new Headers((init?.headers as HeadersInit | undefined) ?? undefined);
+            headers.set("Authorization", `Bearer ${params.apiKey}`);
+            return fetch(input, { ...init, headers });
+          },
       filePathHint: params.fileName,
     });
 
