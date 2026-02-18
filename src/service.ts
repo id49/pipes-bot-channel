@@ -1,6 +1,9 @@
 import type { OpenClawPluginService, OpenClawPluginServiceContext } from "openclaw/plugin-sdk";
 import { PipesBotConnection } from "./connection.js";
 import { handleInbound } from "./inbound.js";
+import { isPipesBotReplyStatus } from "./types.js";
+import { handleReplyStatus, trackOutboundReply } from "./outbound.js";
+import { getPipesBotRuntime } from "./runtime.js";
 
 export function createPipesBotService(): OpenClawPluginService {
   let connection: PipesBotConnection | null = null;
@@ -28,10 +31,27 @@ export function createPipesBotService(): OpenClawPluginService {
       });
 
       connection.on("message", (msg: object) => {
+        // Route reply_status events to outbound handler
+        if (isPipesBotReplyStatus(msg)) {
+          handleReplyStatus(msg, { logger: ctx.logger, core: getPipesBotRuntime() });
+          return;
+        }
+
+        // Route whatsapp_message events to inbound handler
         void handleInbound(msg, {
           apiKey,
           accountId: "default",
-          send: (payload: object) => connection!.send(payload),
+          send: (payload: object) => {
+            const sent = connection!.send(payload);
+            if (sent) {
+              // Track outbound for reply_status correlation
+              const replyData = (payload as { data?: { conversationId?: string } }).data;
+              if (replyData?.conversationId) {
+                trackOutboundReply(replyData.conversationId);
+              }
+            }
+            return sent;
+          },
           logger: ctx.logger,
         }).catch((err: unknown) => {
           ctx.logger.error(`pipes-bot-channel: inbound error: ${String(err)}`);
