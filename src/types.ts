@@ -85,6 +85,29 @@ export function isPipesBotMessage(msg: unknown): msg is PipesBotMessage {
   );
 }
 
+// ── PipesBot reply_status envelope ───────────────────────────────────────────
+
+export type PipesBotReplyStatus = {
+  type: "reply_status";
+  data: {
+    conversationId: string;
+    success: boolean;
+    messageId?: string; // Present on success
+    error?: string; // Present on failure
+    code?: string; // Present on failure
+  };
+};
+
+export function isPipesBotReplyStatus(msg: unknown): msg is PipesBotReplyStatus {
+  return (
+    typeof msg === "object" &&
+    msg !== null &&
+    "type" in msg &&
+    (msg as { type: unknown }).type === "reply_status" &&
+    "data" in msg
+  );
+}
+
 // ── PluginLogger convenience alias ────────────────────────────────────────────
 
 export type PluginLogger = OpenClawPluginServiceContext["logger"];
