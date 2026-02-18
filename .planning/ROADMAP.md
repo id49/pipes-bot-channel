@@ -72,11 +72,11 @@ Plans:
   2. Delivery confirmations (`reply_status` with success) are surfaced to OpenClaw
   3. A `SERVICE_WINDOW_EXPIRED` error produces a clear, human-readable message explaining the 24-hour window constraint
   4. OpenClaw dashboard shows the connection health status for each configured PipesBot account
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
+- [ ] 04-01-PLAN.md — Reply status handling, failure classification, and agent-facing error messages
+- [ ] 04-02-PLAN.md — Connection health dashboard via minimal ChannelPlugin registration
 
 ## Progress
 
@@ -88,4 +88,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | 1. Plugin Scaffold | 1/1 | Complete | 2026-02-17 |
 | 2. WebSocket Transport | 1/1 | Complete | 2026-02-17 |
 | 3. Inbound Messages | 2/2 | Complete | 2026-02-17 |
-| 4. Outbound and Status | 0/TBD | Not started | - |
+| 4. Outbound and Status | 0/2 | Not started | - |
