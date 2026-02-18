@@ -1,7 +1,10 @@
 {
-  "name": "pipes-bot-channel",
-  "version": "0.1.0",
+  "name": "@pipes.bot/pipes-bot-channel",
+  "version": "0.1.4",
+  "description": "WhatsApp channel via PipesBot managed proxy (OpenClaw plugin)",
   "type": "module",
+  "main": "index.ts",
+  "license": "MIT",
   "dependencies": {
     "ws": "^8.18.0"
   },

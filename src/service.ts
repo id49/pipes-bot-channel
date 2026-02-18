@@ -5,6 +5,7 @@ import { isPipesBotReplyStatus } from "./types.js";
 import { handleReplyStatus, trackOutboundReply } from "./outbound.js";
 import { getPipesBotRuntime } from "./runtime.js";
 import { updateConnectionStatus } from "./status-store.js";
+import { resolveApiKey } from "./channel.js";
 import type { ConnectionState } from "./connection.js";
 
 export function createPipesBotService(): OpenClawPluginService {
@@ -14,10 +15,7 @@ export function createPipesBotService(): OpenClawPluginService {
     id: "pipes-bot-channel",
 
     start(ctx: OpenClawPluginServiceContext): void {
-      const pluginConfig = ctx.config.plugins?.entries?.["pipes-bot-channel"]
-        ?.config as { apiKey?: string } | undefined;
-
-      const apiKey = pluginConfig?.apiKey;
+      const apiKey = resolveApiKey(ctx.config);
 
       if (!apiKey || !apiKey.startsWith("pk_")) {
         ctx.logger.error(
