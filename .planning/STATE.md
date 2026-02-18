@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-17)
 Phase: 4 of 4 (Outbound and Status)
 Plan: 2 of 2 in current phase
 Status: Phase complete
-Last activity: 2026-02-18 — Completed 04-02-PLAN.md
+Last activity: 2026-02-18 — Completed quick task 001: Fix authFailed reset and pongTimer leak
 
 Progress: [██████████] 100% (6 of 6 plans complete)
 
@@ -70,6 +70,12 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 None.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 001 | Fix authFailed reset on stop() and pongTimer overwrite without clearing | 2026-02-18 | 87728ac | [001-fix-authfailed-reset-and-pongtimer-leak](./quick/001-fix-authfailed-reset-and-pongtimer-leak/) |
 
 ### Blockers/Concerns
 
