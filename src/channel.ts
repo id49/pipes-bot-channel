@@ -7,7 +7,7 @@ type PipesBotSetupInput = ChannelSetupInput & {
   apiKey?: string;
 };
 
-const CHANNEL_KEY = "pipes-bot";
+const CHANNEL_KEY = "pipes-bot-channel";
 
 function getChannelConfig(cfg: OpenClawConfig): Record<string, unknown> {
   return ((cfg.channels as Record<string, unknown>)?.[CHANNEL_KEY] ?? {}) as Record<string, unknown>;

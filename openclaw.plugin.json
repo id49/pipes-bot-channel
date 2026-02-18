@@ -1,6 +1,6 @@
 {
   "id": "pipes-bot-channel",
-  "channels": ["pipes-bot"],
+  "channels": ["pipes-bot-channel"],
   "configSchema": {
     "type": "object",
     "additionalProperties": true,
