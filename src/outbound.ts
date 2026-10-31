@@ -6,6 +6,7 @@ import type { PluginLogger } from "./types.js";
 
 export type ReplyFailureKind =
   | "SERVICE_WINDOW_EXPIRED"
+  | "DAILY_LIMIT_REACHED"
   | "RATE_LIMITED"
   | "FORBIDDEN"
   | "NOT_FOUND"
@@ -50,7 +51,8 @@ export function trackOutboundReply(conversationId: string): void {
  * Handle a reply_status event from PipesBot.
  * - Logs success events
  * - Classifies and logs failure events
- * - Enqueues agent-facing system event for SERVICE_WINDOW_EXPIRED failures
+ * - Enqueues an agent-facing system event for any failure with a pending reply
+ *   (SERVICE_WINDOW_EXPIRED and DAILY_LIMIT_REACHED get dedicated copy)
  */
 export function handleReplyStatus(
   msg: unknown,
@@ -93,6 +95,8 @@ function classifyReplyFailure(code?: string): ReplyFailureKind {
   switch (code) {
     case "SERVICE_WINDOW_EXPIRED":
       return "SERVICE_WINDOW_EXPIRED";
+    case "DAILY_LIMIT_REACHED":
+      return "DAILY_LIMIT_REACHED";
     case "RATE_LIMITED":
       return "RATE_LIMITED";
     case "FORBIDDEN":
@@ -109,6 +113,9 @@ function classifyReplyFailure(code?: string): ReplyFailureKind {
 function buildFailureMessage(kind: ReplyFailureKind, raw?: string): string {
   if (kind === "SERVICE_WINDOW_EXPIRED") {
     return "Unable to send reply: the 24-hour WhatsApp messaging window has expired. The contact must send a new message to reopen the conversation.";
+  }
+  if (kind === "DAILY_LIMIT_REACHED") {
+    return "Unable to send reply: this sandbox number reached its daily limit (5 messages/day). It resets at 00:00 UTC. Do not retry until then. For more volume, connect your own number with BYON.";
   }
   return `Reply failed: ${raw ?? kind}`;
 }
