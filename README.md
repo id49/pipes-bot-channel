@@ -71,8 +71,8 @@ A BYON number is a normal business number, so anyone can message it. In App mode
 - **Phone numbers** can be written in any format. They are compared by digits only, so `+55 (11) 99999-0000` matches `5511999990000`
 - **WhatsApp user IDs** (BSUIDs, for example `US.13491208655302741918`) are entries that contain a `.`. They are compared exactly against the sender's user ID and parent user ID
 - An entry can also hold several senders separated by `,` or `;`
-- An empty or missing `allowFrom` drops every message. The channel still connects, logs a warning once, and shows `No trusted senders configured (allowFrom)` in its status
-- `allowFrom` is read again for each incoming message, so changes apply without restarting
+- An empty or missing `allowFrom` drops every message. The channel still connects, logs a warning once, and shows `No trusted senders configured (allowFrom)` as the status error (unless an authentication failure or another connection error is already reported)
+- `allowFrom` is read again for each incoming event, so changes apply without restarting
 
 To find the ids of a sender you want to trust, ask them to send a message and read the drop log line:
 
@@ -85,7 +85,7 @@ Either value works in `allowFrom`. A `-` means that id was not provided, for exa
 ### App mode behavior
 
 - Echoes (messages you send from the WhatsApp Business app) and delivery statuses never reach the agent
-- Trusted App senders are dispatched with `CommandAuthorized`, so they can run owner-level commands
+- Trusted App-mode senders are dispatched with `CommandAuthorized: true`, so OpenClaw treats them as authorized to run commands
 - Inbound media needs a PipesBot server that accepts `ak_` keys on media download (pipes-bot#72). Without it, the download fails and the message continues as text only
 - If your App has a webhook URL, events received while the plugin is offline go to the webhook only and are not replayed to the plugin
 - Reply failures (for example the 24-hour WhatsApp messaging window having expired) are reported back to the agent as a system event
