@@ -1,6 +1,7 @@
 import type { OpenClawPluginService, OpenClawPluginServiceContext } from "openclaw/plugin-sdk";
 import { PipesBotConnection } from "./connection.js";
 import { handleInbound } from "./inbound.js";
+import { fromLegacyFrame } from "./adapters/legacy.js";
 import { isPipesBotReplyStatus } from "./types.js";
 import { handleReplyStatus, trackOutboundReply } from "./outbound.js";
 import { getPipesBotRuntime } from "./runtime.js";
@@ -57,17 +58,20 @@ export function createPipesBotService(): OpenClawPluginService {
         }
 
         // Route whatsapp_message events to inbound handler
-        void handleInbound(msg, {
+        const inbound = fromLegacyFrame(msg);
+        if (!inbound || inbound.replyTarget.kind !== "legacy") return;
+        const { conversationId, poolNumberId, toNumber } = inbound.replyTarget;
+        void handleInbound(inbound, {
           apiKey,
           accountId: "default",
-          send: (payload: object) => {
-            const sent = connection!.send(payload);
+          reply: (text: string) => {
+            const sent = connection!.send({
+              type: "whatsapp_reply",
+              data: { conversationId, poolNumberId, toNumber, text },
+            });
             if (sent) {
               // Track outbound for reply_status correlation
-              const replyData = (payload as { data?: { conversationId?: string } }).data;
-              if (replyData?.conversationId) {
-                trackOutboundReply(replyData.conversationId);
-              }
+              trackOutboundReply(conversationId);
             }
             return sent;
           },
