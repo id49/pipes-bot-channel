@@ -2,6 +2,7 @@ import type { ChannelPlugin, ChannelSetupInput, OpenClawConfig } from "openclaw/
 import { buildChannelConfigSchema } from "openclaw/plugin-sdk";
 import { getConnectionStatus } from "./status-store.js";
 import { PipesBotConfigSchema } from "./config-schema.js";
+import { parseAllowFrom } from "./trust.js";
 
 type PipesBotSetupInput = ChannelSetupInput & {
   apiKey?: string;
@@ -24,6 +25,17 @@ export function resolveApiKey(cfg: OpenClawConfig): string | undefined {
 // The key prefix is the only mode selector: ak_ keys run in BYON App mode, pk_ keys in sandbox.
 export function resolveMode(apiKey: string): PipesBotMode {
   return apiKey.startsWith("ak_") ? "app" : "sandbox";
+}
+
+export type AppSettings = { allowFrom: string[]; poolNumberId?: string };
+
+export function resolveAppSettings(cfg: OpenClawConfig): AppSettings {
+  const channelCfg = getChannelConfig(cfg);
+  const poolNumberId = typeof channelCfg.poolNumberId === "string" ? channelCfg.poolNumberId.trim() : "";
+  return {
+    allowFrom: parseAllowFrom(channelCfg.allowFrom),
+    poolNumberId: poolNumberId || undefined,
+  };
 }
 
 export const pipesBotChannelPlugin: ChannelPlugin = {

@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { resolveApiKey, resolveMode } from "../src/channel.js";
+import { resolveApiKey, resolveAppSettings, resolveMode } from "../src/channel.js";
 import { PipesBotConfigSchema } from "../src/config-schema.js";
 
 const cfg = (c: object) => ({ channels: { "pipes-bot-channel": c } }) as never;
@@ -14,6 +14,11 @@ test("resolveApiKey accepts pk_ and ak_ keys", () => {
 test("resolveMode derives the mode from the key prefix", () => {
   expect(resolveMode("pk_abc")).toBe("sandbox");
   expect(resolveMode("ak_live_abc")).toBe("app");
+});
+
+test("resolveAppSettings reads allowFrom and poolNumberId", () => {
+  expect(resolveAppSettings(cfg({ allowFrom: ["a, b"], poolNumberId: " pn_1 " }))).toEqual({ allowFrom: ["a", "b"], poolNumberId: "pn_1" });
+  expect(resolveAppSettings(cfg({ poolNumberId: "" }))).toEqual({ allowFrom: [], poolNumberId: undefined });
 });
 
 test("config schema accepts allowFrom and poolNumberId", () => {
