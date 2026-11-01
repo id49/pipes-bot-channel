@@ -109,16 +109,23 @@ export const pipesBotChannelPlugin: ChannelPlugin = {
   status: {
     defaultRuntime: { accountId: "default", connected: false, lastError: null },
 
-    buildAccountSnapshot: ({ runtime }) => {
+    buildAccountSnapshot: ({ cfg, runtime }) => {
       const status = getConnectionStatus();
+      const apiKey = resolveApiKey(cfg);
+      const mode = apiKey ? resolveMode(apiKey) : undefined;
+      const noTrustedSenders = mode === "app" && resolveAppSettings(cfg).allowFrom.length === 0;
       return {
         accountId: "default",
         connected: status.connected,
         running: !status.authFailed,
         lastConnectedAt: status.lastConnectedAt,
+        ...(mode ? { mode } : {}),
         lastError: status.authFailed
-          ? "Authentication failed -- check your pk_ API key"
-          : (status.lastError ?? runtime?.lastError ?? null),
+          ? "Authentication failed -- check your API key (pk_ for sandbox, ak_ for a BYON App)"
+          : (status.lastError ??
+            (noTrustedSenders ? "No trusted senders configured (allowFrom)" : null) ??
+            runtime?.lastError ??
+            null),
       };
     },
   },

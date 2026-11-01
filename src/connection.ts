@@ -4,6 +4,9 @@ import type { OpenClawPluginServiceContext } from "openclaw/plugin-sdk";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
+const DEFAULT_BASE_URL = "wss://api.pipes.bot/ws";
+// The server closes WebSockets with this code when the App is upgraded to API v2.
+const CLOSE_API_VERSION_CHANGED = 4000;
 const BASE_MS = 1_000;
 const MAX_MS = 120_000; // 2 min cap (user decision)
 const PING_INTERVAL_MS = 25_000;
@@ -21,8 +24,8 @@ function computeBackoffDelay(attempt: number): number {
   return Math.floor(Math.random() * Math.min(MAX_MS, BASE_MS * Math.pow(2, attempt)));
 }
 
-function buildWsUrl(apiKey: string): string {
-  return `wss://api.pipes.bot/ws?apiKey=${encodeURIComponent(apiKey)}`;
+function buildWsUrl(baseUrl: string, apiKey: string): string {
+  return `${baseUrl}?apiKey=${encodeURIComponent(apiKey)}`;
 }
 
 // ── PipesBotConnection ───────────────────────────────────────────────────────
@@ -30,6 +33,7 @@ function buildWsUrl(apiKey: string): string {
 export class PipesBotConnection extends EventEmitter {
   private readonly apiKey: string;
   private readonly logger: PluginLogger;
+  private readonly baseUrl: string;
 
   private state: ConnectionState = "disconnected";
   private ws: WebSocket | null = null;
@@ -39,10 +43,11 @@ export class PipesBotConnection extends EventEmitter {
   private pingTimer: ReturnType<typeof setInterval> | null = null;
   private pongTimer: ReturnType<typeof setTimeout> | null = null;
 
-  constructor(apiKey: string, logger: PluginLogger) {
+  constructor(apiKey: string, logger: PluginLogger, opts?: { baseUrl?: string }) {
     super();
     this.apiKey = apiKey;
     this.logger = logger;
+    this.baseUrl = opts?.baseUrl ?? DEFAULT_BASE_URL;
   }
 
   // ── Public API ─────────────────────────────────────────────────────────────
@@ -86,7 +91,7 @@ export class PipesBotConnection extends EventEmitter {
   // ── Private methods ────────────────────────────────────────────────────────
 
   private doConnect(): void {
-    const ws = new WebSocket(buildWsUrl(this.apiKey), {
+    const ws = new WebSocket(buildWsUrl(this.baseUrl, this.apiKey), {
       handshakeTimeout: 10_000,
     });
     this.ws = ws;
@@ -130,16 +135,32 @@ export class PipesBotConnection extends EventEmitter {
       this.logger.error(`pipes-bot-channel: WebSocket error: ${err.message}`);
     });
 
-    ws.on("close", () => {
+    ws.on("close", (code) => {
       this.stopHeartbeat();
       this.ws = null;
 
       if (this.shouldReconnect) {
-        this.scheduleReconnect();
+        if (code === CLOSE_API_VERSION_CHANGED) {
+          this.reconnectNow();
+        } else {
+          this.scheduleReconnect();
+        }
       } else {
         this.setState("disconnected");
       }
     });
+  }
+
+  // API version changed server-side: reconnect without backoff and leave
+  // reconnectAttempts at 0 so a later failure starts backoff from attempt 1.
+  private reconnectNow(): void {
+    this.logger.info("pipes-bot-channel: API version changed -- reconnecting now");
+    this.setState("reconnecting");
+    this.reconnectAttempts = 0;
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null;
+      this.doConnect();
+    }, 0);
   }
 
   private scheduleReconnect(): void {
