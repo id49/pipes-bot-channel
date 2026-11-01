@@ -44,6 +44,9 @@ export type PipesBotMessageData = {
   poolNumberPhoneNumber: string;
   fromNumber: string;
   fromName?: string;
+  userId?: string;
+  parentUserId?: string;
+  username?: string;
   text: string;
   body: string;
   timestamp: string;
