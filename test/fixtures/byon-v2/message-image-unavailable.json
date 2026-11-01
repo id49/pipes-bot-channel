@@ -1,0 +1,45 @@
+{
+  "id": "evt_hand_image-unavailable",
+  "field": "messages",
+  "createdAt": "2025-06-08T20:59:44.512Z",
+  "pipes": {
+    "appId": "app_abc123",
+    "poolNumberId": "pn_abc123",
+    "media": {
+      "media_missing_1": {
+        "unavailable": true
+      }
+    }
+  },
+  "whatsapp": {
+    "messaging_product": "whatsapp",
+    "metadata": {
+      "display_phone_number": "15550001111",
+      "phone_number_id": "106540352242922"
+    },
+    "contacts": [
+      {
+        "profile": {
+          "name": "Sheena Nelson"
+        },
+        "wa_id": "16505551234",
+        "user_id": "US.13491208655302741918"
+      }
+    ],
+    "messages": [
+      {
+        "from": "16505551234",
+        "from_user_id": "US.13491208655302741918",
+        "id": "wamid.HAND_image-unavailable_1",
+        "timestamp": "1749416383",
+        "type": "image",
+        "image": {
+          "caption": "Broken image",
+          "mime_type": "image/jpeg",
+          "sha256": "abc",
+          "id": "media_missing_1"
+        }
+      }
+    ]
+  }
+}

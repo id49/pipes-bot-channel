@@ -1,0 +1,29 @@
+{
+  "id": "evt_hand_echo",
+  "field": "smb_message_echoes",
+  "createdAt": "2025-06-08T20:59:44.512Z",
+  "pipes": {
+    "appId": "app_abc123",
+    "poolNumberId": "pn_abc123",
+    "media": {}
+  },
+  "whatsapp": {
+    "messaging_product": "whatsapp",
+    "metadata": {
+      "display_phone_number": "15550001111",
+      "phone_number_id": "106540352242922"
+    },
+    "message_echoes": [
+      {
+        "from": "15550001111",
+        "to": "16505551234",
+        "id": "wamid.HAND_echo_1",
+        "timestamp": "1749416383",
+        "type": "text",
+        "text": {
+          "body": "Sent from the phone"
+        }
+      }
+    ]
+  }
+}

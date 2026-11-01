@@ -1,7 +1,7 @@
 {
   "name": "@pipes.bot/pipes-bot-channel",
-  "version": "0.1.14",
-  "description": "WhatsApp channel via PipesBot managed proxy (OpenClaw plugin)",
+  "version": "0.2.0",
+  "description": "WhatsApp channel via PipesBot (sandbox numbers and BYON Apps)",
   "type": "module",
   "main": "index.ts",
   "license": "MIT",
@@ -12,7 +12,11 @@
   "devDependencies": {
     "@types/ws": "^8.5.13",
     "openclaw": "*",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^5.0.5"
+  },
+  "scripts": {
+    "test": "vitest run"
   },
   "openclaw": {
     "extensions": ["./index.ts"]
