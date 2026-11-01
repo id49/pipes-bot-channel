@@ -114,3 +114,35 @@ export function isPipesBotReplyStatus(msg: unknown): msg is PipesBotReplyStatus 
 // ── PluginLogger convenience alias ────────────────────────────────────────────
 
 export type PluginLogger = OpenClawPluginServiceContext["logger"];
+
+// ── API v2 frames (App mode) ─────────────────────────────────────────────────
+
+export type V2EventFrame = { type: "event"; data: unknown };
+
+export function isV2EventFrame(msg: unknown): msg is V2EventFrame {
+  return (
+    typeof msg === "object" &&
+    msg !== null &&
+    "type" in msg &&
+    (msg as { type: unknown }).type === "event" &&
+    "data" in msg
+  );
+}
+
+export type V2SendResult = {
+  type: "send_result";
+  requestId?: string;
+  success: boolean;
+  messageId?: string;
+  error?: { code?: string | number; message?: string; title?: string };
+};
+
+export function isV2SendResult(msg: unknown): msg is V2SendResult {
+  return (
+    typeof msg === "object" &&
+    msg !== null &&
+    "type" in msg &&
+    (msg as { type: unknown }).type === "send_result" &&
+    typeof (msg as { success?: unknown }).success === "boolean"
+  );
+}
