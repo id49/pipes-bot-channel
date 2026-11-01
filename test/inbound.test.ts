@@ -51,6 +51,17 @@ test("sandbox context is identical to the pre-refactor fields", async () => {
   expect(stub.dispatches).toBe(1);
 });
 
+test("sandbox keeps an empty fromName exact", async () => {
+  const msg = fromLegacyFrame(legacyFrame({ fromName: "" }))!;
+  await handleInbound(msg, {
+    apiKey: "pk_x",
+    accountId: "default",
+    reply: () => true,
+    logger: stubLogger(),
+  });
+  expect(stub.contexts[0]).toMatchObject({ SenderName: "", ConversationLabel: "" });
+});
+
 test("commandAuthorized sets CommandAuthorized: true", async () => {
   const msg = fromLegacyFrame(legacyFrame())!;
   await handleInbound(msg, {

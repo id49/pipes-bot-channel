@@ -17,7 +17,7 @@ export function fromLegacyFrame(frame: unknown): InboundMessage | null {
   else sender.phone = data.fromNumber;
   if (data.userId) sender.userId = data.userId;
   if (data.parentUserId) sender.parentUserId = data.parentUserId;
-  if (data.fromName) sender.name = data.fromName;
+  if (typeof data.fromName === "string") sender.name = data.fromName;
 
   const message: InboundMessage = {
     messageId: data.messageId,

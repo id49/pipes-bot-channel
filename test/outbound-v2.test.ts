@@ -53,6 +53,13 @@ test("classifyV2Failure", () => {
   expect(classifyV2Failure(undefined)).toBe("Reply failed: unknown error");
 });
 
+test("classifyV2Failure treats empty message and title as absent", () => {
+  expect(classifyV2Failure({ code: "NOT_FOUND", message: "" })).toBe("Reply failed: NOT_FOUND");
+  expect(classifyV2Failure({ code: 131062, message: "", title: "t" })).toBe("Reply failed: Meta error 131062: t");
+  expect(classifyV2Failure({ code: 131062, message: "", title: "" })).toBe("Reply failed: Meta error 131062");
+  expect(classifyV2Failure({ message: "" })).toBe("Reply failed: unknown error");
+});
+
 test("classifyV2Failure edge cases", () => {
   expect(classifyV2Failure({ code: 131026 })).toBe("Reply failed: Meta error 131026");
   expect(classifyV2Failure({ code: "FORBIDDEN" })).toBe("Reply failed: FORBIDDEN");

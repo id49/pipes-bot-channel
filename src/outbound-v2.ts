@@ -48,6 +48,10 @@ export function buildSendFrame(
 
 const WINDOW_EXPIRED_CODE = 131047;
 
+// An empty string carries no detail, so it counts as absent.
+const nonEmpty = (value: unknown): string | undefined =>
+  typeof value === "string" && value !== "" ? value : undefined;
+
 export function classifyV2Failure(error: unknown): string {
   if (typeof error === "string") return `Reply failed: ${error}`;
   if (typeof error !== "object" || error === null) return "Reply failed: unknown error";
@@ -62,17 +66,16 @@ export function classifyV2Failure(error: unknown): string {
     if (code === WINDOW_EXPIRED_CODE) {
       return "Unable to send reply: the 24-hour WhatsApp messaging window has expired. The contact must send a new message to reopen the conversation.";
     }
-    const detail = typeof message === "string" ? message : typeof title === "string" ? title : undefined;
+    const detail = nonEmpty(message) ?? nonEmpty(title);
     return detail !== undefined
       ? `Reply failed: Meta error ${code}: ${detail}`
       : `Reply failed: Meta error ${code}`;
   }
   if (typeof code === "string") {
-    return typeof message === "string"
-      ? `Reply failed: ${code}: ${message}`
-      : `Reply failed: ${code}`;
+    const detail = nonEmpty(message);
+    return detail !== undefined ? `Reply failed: ${code}: ${detail}` : `Reply failed: ${code}`;
   }
-  return `Reply failed: ${typeof message === "string" ? message : "unknown error"}`;
+  return `Reply failed: ${nonEmpty(message) ?? "unknown error"}`;
 }
 
 // ── Send tracking ─────────────────────────────────────────────────────────────
