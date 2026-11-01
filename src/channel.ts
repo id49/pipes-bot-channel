@@ -9,6 +9,8 @@ type PipesBotSetupInput = ChannelSetupInput & {
 
 const CHANNEL_KEY = "pipes-bot-channel";
 
+export type PipesBotMode = "sandbox" | "app";
+
 function getChannelConfig(cfg: OpenClawConfig): Record<string, unknown> {
   return ((cfg.channels as Record<string, unknown>)?.[CHANNEL_KEY] ?? {}) as Record<string, unknown>;
 }
@@ -16,7 +18,12 @@ function getChannelConfig(cfg: OpenClawConfig): Record<string, unknown> {
 export function resolveApiKey(cfg: OpenClawConfig): string | undefined {
   const channelCfg = getChannelConfig(cfg);
   const key = channelCfg.apiKey as string | undefined;
-  return key && key.startsWith("pk_") ? key : undefined;
+  return key && (key.startsWith("pk_") || key.startsWith("ak_")) ? key : undefined;
+}
+
+// The key prefix is the only mode selector: ak_ keys run in BYON App mode, pk_ keys in sandbox.
+export function resolveMode(apiKey: string): PipesBotMode {
+  return apiKey.startsWith("ak_") ? "app" : "sandbox";
 }
 
 export const pipesBotChannelPlugin: ChannelPlugin = {
@@ -27,8 +34,16 @@ export const pipesBotChannelPlugin: ChannelPlugin = {
       apiKey: {
         label: "PipesBot API Key",
         sensitive: true,
-        placeholder: "pk_...",
-        help: "Your PipesBot API key (starts with pk_)",
+        placeholder: "pk_... or ak_...",
+        help: "PipesBot account key (pk_, sandbox numbers) or BYON App key (ak_, API v2)",
+      },
+      allowFrom: {
+        label: "Trusted senders",
+        help: "Phone numbers (any format) or WhatsApp user IDs (CC.…) allowed to talk to the agent in App mode",
+      },
+      poolNumberId: {
+        label: "BYON number ID",
+        help: "Only answer on this BYON number (pn_…). Leave empty for all numbers in the App",
       },
     },
   },
