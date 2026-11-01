@@ -55,3 +55,24 @@ test("disconnect cancels a pending close-4000 reconnect timer", async () => {
     await new Promise<void>((resolve) => server.wss.close(() => resolve()));
   }
 });
+
+test("a repeated close 4000 within 30s goes through backoff", async () => {
+  const server = await listen((ws) => ws.close(4000, "api_version_changed"));
+  const logger = stubLogger();
+  const conn = new PipesBotConnection("ak_x", logger, { baseUrl: `ws://127.0.0.1:${server.port}/ws` });
+  try {
+    conn.connect();
+    // First 4000 reconnects immediately; the second one must back off instead of looping at 0 ms.
+    await vi.waitFor(() => expect(logger.lines.some((l) => l.message.includes("reconnect attempt"))).toBe(true), {
+      timeout: 1_000,
+    });
+    const immediate = logger.lines.filter(
+      (l) => l.message === "pipes-bot-channel: API version changed -- reconnecting now"
+    );
+    expect(immediate).toHaveLength(1);
+    expect(server.count()).toBe(2);
+  } finally {
+    conn.disconnect();
+    await new Promise<void>((resolve) => server.wss.close(() => resolve()));
+  }
+});

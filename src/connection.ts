@@ -7,6 +7,8 @@ import type { OpenClawPluginServiceContext } from "openclaw/plugin-sdk";
 const DEFAULT_BASE_URL = "wss://api.pipes.bot/ws";
 // The server closes WebSockets with this code when the App is upgraded to API v2.
 const CLOSE_API_VERSION_CHANGED = 4000;
+// A second 4000 inside this window is treated as a loop and backs off normally.
+const IMMEDIATE_RECONNECT_WINDOW_MS = 30_000;
 const BASE_MS = 1_000;
 const MAX_MS = 120_000; // 2 min cap (user decision)
 const PING_INTERVAL_MS = 25_000;
@@ -39,6 +41,7 @@ export class PipesBotConnection extends EventEmitter {
   private ws: WebSocket | null = null;
   private shouldReconnect = false;
   private reconnectAttempts = 0;
+  private lastImmediateReconnectAt: number | null = null;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private pingTimer: ReturnType<typeof setInterval> | null = null;
   private pongTimer: ReturnType<typeof setTimeout> | null = null;
@@ -140,7 +143,7 @@ export class PipesBotConnection extends EventEmitter {
       this.ws = null;
 
       if (this.shouldReconnect) {
-        if (code === CLOSE_API_VERSION_CHANGED) {
+        if (code === CLOSE_API_VERSION_CHANGED && this.mayReconnectNow()) {
           this.reconnectNow();
         } else {
           this.scheduleReconnect();
@@ -149,6 +152,15 @@ export class PipesBotConnection extends EventEmitter {
         this.setState("disconnected");
       }
     });
+  }
+
+  // Only the first 4000 in a window reconnects at once; a repeat falls back to backoff.
+  private mayReconnectNow(): boolean {
+    const now = Date.now();
+    const last = this.lastImmediateReconnectAt;
+    if (last !== null && now - last < IMMEDIATE_RECONNECT_WINDOW_MS) return false;
+    this.lastImmediateReconnectAt = now;
+    return true;
   }
 
   // API version changed server-side: reconnect without backoff and leave
