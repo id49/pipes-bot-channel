@@ -24,7 +24,7 @@ In scope:
 
 Out of scope:
 
-- Server change for media download with `ak_` keys: tracked in [id49/pipes-bot#71](https://github.com/id49/pipes-bot/issues/71). The plugin depends on it for inbound media in App mode (see Dependencies)
+- Server change for media download with `ak_` keys: done in [id49/pipes-bot#72](https://github.com/id49/pipes-bot/pull/72) (closes #71), see Dependencies
 - Sandbox behavior changes: `pk_` mode stays exactly as it is today
 - OpenClaw pairing flow, `dmPolicy` setting and access groups
 - Legacy (non-v2) Apps as a supported target. They may work through the legacy path (see Frame routing), but they are not tested
@@ -43,7 +43,7 @@ Out of scope:
 | Several numbers in one App? | Connect app-wide; optional `poolNumberId` filter on the client |
 | Owner-level actions | Trusted App-mode senders get `CommandAuthorized: true` |
 | Architecture | One protocol-agnostic inbound pipeline fed by two adapters (legacy and v2) |
-| Media with `ak_` | Fixed server-side (pipes-bot#71); the plugin degrades to text-only if download fails |
+| Media with `ak_` | Fixed server-side (pipes-bot#72, App-scoped); the plugin degrades to text-only if download fails |
 
 ## Configuration
 
@@ -152,7 +152,7 @@ Only envelopes with `field === "messages"` produce messages. For each `whatsapp.
 | Meta `type` | `InboundMessage` |
 | --- | --- |
 | `text` | `body = text.body` |
-| `image`, `audio`, `video`, `document`, `sticker` | `body = <obj>.caption ?? ""`; `media` from `pipes.media[<obj>.id]`; `fileName` from `document.filename`; an entry with `unavailable: true` (or no entry) sets `mediaUnavailable` |
+| `image`, `audio`, `video`, `document`, `sticker` | `body = <obj>.caption ?? ""`; `media` from `pipes.media[<obj>.id]`, with `mimeType` falling back to `<obj>.mime_type` (it is optional in `pipes.media`); `fileName` from `pipes.media` or `document.filename`; an entry with `unavailable: true`, no `downloadUrl`, or no entry sets `mediaUnavailable` |
 | `location` | `location = { latitude, longitude, name, address }`, `body = ""` |
 | `contacts` | `contacts` mapped to the existing `PipesBotContact` shape (`name.formatted_name`, `phones[].phone/type`), `body = ""` |
 | `reaction` | `body = reaction.emoji`, `replyToId = reaction.message_id`; skip if no emoji |
@@ -236,18 +236,19 @@ System events use `core.system.enqueueSystemEvent(message, { sessionKey })`.
 
 ## Dedupe
 
-`dedupe.ts` keeps a bounded set (10-minute TTL, 5,000 entries max, oldest evicted). For v2 events, the envelope `id` is checked first, then each message `wamid`, so a message delivered in two different envelopes is still handled once. Legacy frames are checked by `data.messageId`. Duplicates are dropped with a debug log.
+`dedupe.ts` keeps a bounded set (10-minute TTL, 5,000 entries max, oldest evicted). For v2 events, the envelope `id` is checked first, then each message `wamid`, then each failed status as `<wamid>:failed`. The `wamid` check is required, not optional: the server builds a new random envelope `id` (`evt_<uuid>`) every time it processes a Meta delivery, so a Meta re-delivery arrives with a different envelope `id`. Legacy frames are checked by `data.messageId`. Duplicates are dropped with a debug log.
 
 ## Connection and status
 
 - `PipesBotConnection` keeps its behavior. `ak_` connections never send `poolNumberId` or `conversationId` query params, so the App offline queue drains on connect.
+- The server queues an event for WebSocket only when no WebSocket received it **and** the App webhook did not handle it (`deliverV2Event`). If the App has a webhook URL, events that arrive while the plugin is offline go to the webhook only and are not replayed to the plugin. The README says so.
 - A close with code `4000` (`api_version_changed`) resets the backoff and reconnects immediately (attempt 0).
 - An HTTP 401/403 at upgrade still stops reconnecting. Status error copy: `Authentication failed -- check your API key (pk_ for sandbox, ak_ for a BYON App)`.
 - The status snapshot adds `mode: "sandbox" | "app"`. In App mode with an empty `allowFrom`, `lastError` (when no other error is set) is `No trusted senders configured (allowFrom)`.
 
 ## Media
 
-`downloadPipesBotMedia` is unchanged and called with the configured key. In App mode it depends on [id49/pipes-bot#71](https://github.com/id49/pipes-bot/issues/71). Until that ships, downloads fail with 401, the existing error path logs it, and the message continues text-only.
+`downloadPipesBotMedia` is unchanged and called with the configured key. Since [id49/pipes-bot#72](https://github.com/id49/pipes-bot/pull/72), `GET /v1/media/download/:mediaId` accepts `ak_` keys and only returns media stored for that App (`Media.appId`). On a server without that change, downloads fail with 401, the existing error path logs it, and the message continues text-only.
 
 ## Testing
 
@@ -273,14 +274,14 @@ Pipeline tests (stubbed OpenClaw runtime):
 
 `npx tsc --noEmit` must stay clean.
 
-Manual end-to-end check after pipes-bot#71 is deployed: a real v2 App and number, a trusted phone (text, image, reply), an untrusted phone (no reply, log line with ids), and an echo from the WhatsApp Business app (ignored).
+Manual end-to-end check (needs pipes-bot#72 in production): a real v2 App and number, a trusted phone (text, image, reply), an untrusted phone (no reply, log line with ids), and an echo from the WhatsApp Business app (ignored).
 
 ## Release
 
 - Version `0.2.0`
-- README: App mode setup (`ak_`), `allowFrom` (phone and BSUID formats, how to read a sender's ids from the drop log), `poolNumberId`, echoes ignored, media dependency on the server fix, updated architecture section
+- README: App mode setup (`ak_`), `allowFrom` (phone and BSUID formats, how to read a sender's ids from the drop log), `poolNumberId`, echoes ignored, offline delivery caveat when the App has a webhook, updated architecture section
 - `package.json` description: "WhatsApp channel via PipesBot (sandbox numbers and BYON Apps)"
 
 ## Dependencies
 
-- [id49/pipes-bot#71](https://github.com/id49/pipes-bot/issues/71): media download with `ak_` keys. Needed for inbound media in App mode. Not needed for text, and does not block shipping the plugin.
+- [id49/pipes-bot#72](https://github.com/id49/pipes-bot/pull/72) (closes #71): media download with `ak_` keys, scoped to the App. Merged to `main` on 2026-11-01; needed in production for inbound media in App mode. Not needed for text.
