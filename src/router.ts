@@ -53,15 +53,13 @@ export function createFrameRouter(deps: RouterDeps): (frame: unknown) => Promise
     }
   };
 
-  // Returns whether the message may reach the agent. Sandbox skips the gate; App mode drops everything not allowlisted.
-  const passesGate = (message: InboundMessage, settings: AppSettings | undefined): boolean => {
-    if (mode !== "app" || !settings) return true;
-
+  // App mode's trust decision: everything not allowlisted is dropped, and only "trusted" earns CommandAuthorized.
+  const gate = (message: InboundMessage, settings: AppSettings): "trusted" | "drop" => {
     if (settings.poolNumberId && settings.poolNumberId !== message.poolNumberId) {
       logger.debug?.(
         `pipes-bot-channel: ignoring message for ${message.poolNumberId} (poolNumberId filter is ${settings.poolNumberId})`,
       );
-      return false;
+      return "drop";
     }
     if (settings.allowFrom.length === 0) {
       if (!warnedEmptyAllowFrom) {
@@ -70,15 +68,15 @@ export function createFrameRouter(deps: RouterDeps): (frame: unknown) => Promise
           "pipes-bot-channel: App mode has no trusted senders (allowFrom is empty) -- dropping all inbound messages",
         );
       }
-      return false;
+      return "drop";
     }
     if (!isTrustedSender(message.sender, settings.allowFrom)) {
       logger.info(
         `pipes-bot-channel: dropping message from untrusted sender phone=${show(message.sender.phone)} user_id=${show(message.sender.userId)} -- add one of these to allowFrom to trust them`,
       );
-      return false;
+      return "drop";
     }
-    return true;
+    return "trusted";
   };
 
   const replyFor = (message: InboundMessage): ((text: string) => boolean) => {
@@ -99,13 +97,19 @@ export function createFrameRouter(deps: RouterDeps): (frame: unknown) => Promise
     };
   };
 
-  const deliver = (message: InboundMessage, settings: AppSettings | undefined): Promise<void> =>
+  // Sandbox has no gate and never sets CommandAuthorized.
+  const deliverSandbox = (message: InboundMessage): Promise<void> =>
     isolated(async () => {
-      if (!passesGate(message, settings)) return;
+      await handleInbound(message, { apiKey, accountId: "default", reply: replyFor(message), logger });
+    });
+
+  const deliverApp = (message: InboundMessage, settings: AppSettings): Promise<void> =>
+    isolated(async () => {
+      if (gate(message, settings) !== "trusted") return;
       await handleInbound(message, {
         apiKey,
         accountId: "default",
-        ...(mode === "app" ? { commandAuthorized: true } : {}),
+        commandAuthorized: true,
         reply: replyFor(message),
         logger,
       });
@@ -120,7 +124,8 @@ export function createFrameRouter(deps: RouterDeps): (frame: unknown) => Promise
       logger.info(`pipes-bot-channel: skipping message [id=${show(data.messageId)}] [type=${show(data.type)}]`);
       return;
     }
-    await deliver(message, mode === "app" ? deps.loadAppSettings() : undefined);
+    if (mode === "app") await deliverApp(message, deps.loadAppSettings());
+    else await deliverSandbox(message);
   };
 
   const routeV2Event = async (frame: Record<string, unknown>): Promise<void> => {
@@ -140,7 +145,7 @@ export function createFrameRouter(deps: RouterDeps): (frame: unknown) => Promise
     const fresh = messages.filter((message) => !isDuplicate(message.messageId));
     if (fresh.length === 0) return;
     const settings = deps.loadAppSettings();
-    for (const message of fresh) await deliver(message, settings);
+    for (const message of fresh) await deliverApp(message, settings);
   };
 
   return async (frame) => {

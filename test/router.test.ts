@@ -304,3 +304,20 @@ test("a throwing settings loader is logged, not thrown", async () => {
     message: "pipes-bot-channel: frame handling error: Error: no config",
   });
 });
+
+test("App mode fails closed when settings are unavailable", async () => {
+  const sent: object[] = [];
+  const route = createFrameRouter({
+    mode: "app",
+    apiKey: "ak_x",
+    send: (f) => (sent.push(f), true),
+    logger,
+    loadAppSettings: (() => undefined) as unknown as () => AppSettings,
+    newRequestId: () => "req_1",
+  });
+  await route({ type: "event", data: loadFixture("message-text") });
+  await route(legacyFrame());
+  expect(stub.contexts).toHaveLength(0);
+  expect(stub.dispatches).toBe(0);
+  expect(sent).toHaveLength(0);
+});
