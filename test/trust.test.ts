@@ -17,6 +17,11 @@ test("a BSUID entry never matches a phone by digits", () => {
   expect(isTrustedSender({ phone: "13491208655302741918" }, ["US.13491208655302741918"])).toBe(false);
 });
 
+test("a phone written with dots still matches by digits", () => {
+  expect(isTrustedSender({ phone: "5511999990000" }, ["55.11.99999-0000"])).toBe(true);
+  expect(isTrustedSender({ phone: "5511999990000" }, ["+55 11 99999.0000"])).toBe(true);
+});
+
 test("empty list and digitless entries never match", () => {
   expect(isTrustedSender({ phone: "5511999990000" }, [])).toBe(false);
   expect(isTrustedSender({ phone: "" }, ["abc"])).toBe(false);

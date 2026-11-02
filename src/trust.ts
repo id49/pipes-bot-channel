@@ -15,12 +15,15 @@ export function parseAllowFrom(raw: unknown): string[] {
 
 const digitsOf = (value: string): string => value.replace(/\D/g, "");
 
-// An entry with a "." is a BSUID (e.g. US.123...) and matches by exact ID; anything else is a phone number matched by digits.
+// BSUIDs start with a two-letter country code and a dot (US.123..., US.ENT.123...).
+const BSUID_PREFIX = /^[A-Za-z]{2}\./;
+
+// An entry starting with a country code and a dot is a BSUID and matches by exact ID; anything else is a phone number matched by digits.
 export function isTrustedSender(sender: SenderIds, allowFrom: readonly string[]): boolean {
   const senderDigits = sender.phone ? digitsOf(sender.phone) : "";
   return allowFrom.some((raw) => {
     const entry = raw.trim();
-    if (entry.includes(".")) {
+    if (BSUID_PREFIX.test(entry)) {
       return entry === sender.userId || entry === sender.parentUserId;
     }
     const entryDigits = digitsOf(entry);

@@ -69,7 +69,7 @@ App mode example:
 A BYON number is a normal business number, so anyone can message it. In App mode only senders listed in `allowFrom` reach the agent. Everyone else is dropped silently: nothing is sent back to them.
 
 - **Phone numbers** can be written in any format. They are compared by digits only, so `+55 (11) 99999-0000` matches `5511999990000`
-- **WhatsApp user IDs** (BSUIDs, for example `US.13491208655302741918`) are entries that contain a `.`. They are compared exactly against the sender's user ID and parent user ID
+- **WhatsApp user IDs** (BSUIDs, for example `US.13491208655302741918`) are entries that start with a two-letter country code and a dot. They are compared exactly against the sender's user ID and parent user ID
 - An entry can also hold several senders separated by `,` or `;`
 - An empty or missing `allowFrom` drops every message. The channel still connects, logs a warning once, and shows `No trusted senders configured (allowFrom)` as the status error (unless an authentication failure or another connection error is already reported)
 - `allowFrom` is read again for each incoming event, so changes apply without restarting
@@ -80,7 +80,7 @@ To find the ids of a sender you want to trust, ask them to send a message and re
 pipes-bot-channel: dropping message from untrusted sender phone=5511999990000 user_id=US.13491208655302741918 -- add one of these to allowFrom to trust them
 ```
 
-Either value works in `allowFrom`. A `-` means that id was not provided, for example no phone when the user has not shared their number.
+Either value works in `allowFrom`. A `-` means that id was not provided, for example no phone when the user has not shared their number. Each sender gets at most one such line at info level every 10 minutes; further drops are logged at debug, so a stranger cannot flood the log.
 
 ### App mode behavior
 

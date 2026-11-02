@@ -168,6 +168,20 @@ test("dedupe happens before the gate: an untrusted duplicate logs once", async (
   expect(logger.lines.filter((l) => l.message.includes("untrusted sender"))).toHaveLength(1);
 });
 
+test("repeat drops from the same untrusted sender go to debug", async () => {
+  const route = appRouter({ allowFrom: ["15559998888"] });
+  await route({ type: "event", data: loadFixture("message-text") });
+  await route({ type: "event", data: loadFixture("message-image") });
+  const drops = logger.lines.filter((l) => l.message.includes("untrusted sender"));
+  expect(drops.map((l) => l.level)).toEqual(["info", "debug"]);
+});
+
+test("each new untrusted sender gets its own info line", async () => {
+  await appRouter({ allowFrom: ["15550001111"] })({ type: "event", data: loadFixture("message-two-senders") });
+  const drops = logger.lines.filter((l) => l.message.includes("untrusted sender"));
+  expect(drops.map((l) => l.level)).toEqual(["info", "info"]);
+});
+
 test("send_result failure becomes a system event", async () => {
   const route = appRouter({ allowFrom: ["16505551234"] });
   await route({ type: "event", data: loadFixture("message-text") });

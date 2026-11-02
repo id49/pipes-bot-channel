@@ -31,6 +31,8 @@ export function createFrameRouter(deps: RouterDeps): (frame: unknown) => Promise
   const { mode, apiKey, send, logger } = deps;
   const newRequestId = deps.newRequestId ?? (() => randomUUID());
   const dedupe = new Dedupe();
+  // Bounds the untrusted-sender log: the first drop per sender is info, repeats go to debug.
+  const untrustedLogged = new Dedupe();
   const v2Outbound = new V2Outbound();
   const v2Deps: V2Deps = {
     logger,
@@ -71,9 +73,11 @@ export function createFrameRouter(deps: RouterDeps): (frame: unknown) => Promise
       return "drop";
     }
     if (!isTrustedSender(message.sender, settings.allowFrom)) {
-      logger.info(
-        `pipes-bot-channel: dropping message from untrusted sender phone=${show(message.sender.phone)} user_id=${show(message.sender.userId)} -- add one of these to allowFrom to trust them`,
-      );
+      const phone = show(message.sender.phone);
+      const userId = show(message.sender.userId);
+      const line = `pipes-bot-channel: dropping message from untrusted sender phone=${phone} user_id=${userId} -- add one of these to allowFrom to trust them`;
+      if (untrustedLogged.seen(`${phone}|${userId}`)) logger.debug?.(line);
+      else logger.info(line);
       return "drop";
     }
     return "trusted";
