@@ -146,6 +146,8 @@ export function createFrameRouter(deps: RouterDeps): (frame: unknown) => Promise
       await isolated(() => v2Outbound.handleFailedStatus(status, v2Deps));
     }
 
+    // Ids are recorded before delivery on purpose (at-most-once): the server does not resend after a failed
+    // delivery, and recording later would let two close copies both reach the agent or repeat a sent reply.
     const fresh = messages.filter((message) => !isDuplicate(message.messageId));
     if (fresh.length === 0) return;
     const settings = deps.loadAppSettings();

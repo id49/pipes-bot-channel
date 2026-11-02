@@ -22,6 +22,22 @@ test("a phone written with dots still matches by digits", () => {
   expect(isTrustedSender({ phone: "5511999990000" }, ["+55 11 99999.0000"])).toBe(true);
 });
 
+test("Brazilian mobiles match with or without the ninth digit", () => {
+  expect(isTrustedSender({ phone: "551187654321" }, ["+55 11 98765-4321"])).toBe(true);
+  expect(isTrustedSender({ phone: "5511987654321" }, ["+55 11 8765-4321"])).toBe(true);
+  expect(isTrustedSender({ phone: "5511987654321" }, ["5511987654321"])).toBe(true);
+  expect(isTrustedSender({ phone: "552197654321" }, ["5511987654321"])).toBe(false);
+});
+
+test("Brazilian landlines never match a mobile with the ninth digit", () => {
+  expect(isTrustedSender({ phone: "551133334444" }, ["5511933334444"])).toBe(false);
+  expect(isTrustedSender({ phone: "5511933334444" }, ["551133334444"])).toBe(false);
+});
+
+test("the ninth-digit rule applies to Brazil only", () => {
+  expect(isTrustedSender({ phone: "541187654321" }, ["5411987654321"])).toBe(false);
+});
+
 test("empty list and digitless entries never match", () => {
   expect(isTrustedSender({ phone: "5511999990000" }, [])).toBe(false);
   expect(isTrustedSender({ phone: "" }, ["abc"])).toBe(false);

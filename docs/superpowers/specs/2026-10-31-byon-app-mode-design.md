@@ -184,8 +184,8 @@ Runs in App mode only, after dedupe and before any media download, in this order
 1. **Number filter.** If `poolNumberId` is configured and differs from the message's number, drop (debug log).
 2. **Empty allowlist.** If `allowFrom` is empty or missing, drop. Log a warning once per process start: `App mode has no trusted senders (allowFrom is empty) -- dropping all inbound messages`.
 3. **Match.** Trusted if any of `sender.phone`, `sender.userId`, `sender.parentUserId` matches any `allowFrom` entry:
-   - Entries that contain a `.` are BSUIDs, compared exactly after trimming (`CC.<id>`, `CC.ENT.<id>`)
-   - Other entries are phone numbers, compared digits-only on both sides (`+55 (11) 99999-0000` = `5511999990000`). Entries with no digits are ignored
+   - Entries that start with a two-letter country code and a dot are BSUIDs, compared exactly after trimming (`CC.<id>`, `CC.ENT.<id>`)
+   - Other entries are phone numbers, compared digits-only on both sides (`+55 (11) 99999-0000` = `5511999990000`). Brazilian mobiles match with or without the ninth digit (`5511987654321` = `551187654321`; subscriber numbers starting 6-9 only). Entries with no digits are ignored
 4. **Untrusted.** Drop silently. Nothing is sent to the sender. Info log: `dropping message from untrusted sender phone=<phone|-> user_id=<userId|-> -- add one of these to allowFrom to trust them`.
 
 Trusted senders are dispatched with `CommandAuthorized: true`. Sandbox messages skip the gate and keep today's context (no `CommandAuthorized`).
